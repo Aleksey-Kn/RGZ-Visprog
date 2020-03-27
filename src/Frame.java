@@ -4,6 +4,8 @@ import javax.swing.table.TableRowSorter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Frame extends JFrame {
     private ResultSet rs;
@@ -52,6 +54,20 @@ public class Frame extends JFrame {
             }
             tableModel.addRow(row);
         }
+
+        all.addActionListener(l -> filter.setRowFilter(null));
+        questions.addActionListener(l -> {
+            if(textField.getText().equals("")){
+                filter.setRowFilter(RowFilter.regexFilter("question", 4));
+            }
+            else {
+                List<RowFilter<DefaultTableModel, Integer>> rowFilters = new ArrayList<>();
+                rowFilters.add(RowFilter.regexFilter(textField.getText(), 5));
+                rowFilters.add(RowFilter.regexFilter("question", 4));
+                filter.setRowFilter(RowFilter.andFilter(rowFilters));
+            }
+        });
+        task.addActionListener(l -> filter.setRowFilter(RowFilter.regexFilter("task", 4)));
 
         setVisible(true);
     }

@@ -43,7 +43,7 @@ public class Frame extends JFrame {
         TableRowSorter<DefaultTableModel> filter = new TableRowSorter<>(tableModel);
         table.setRowSorter(filter);
         JScrollPane firstScrollPane = new JScrollPane(table);
-        firstScrollPane.setBounds(5, 90, 790, 300);
+        firstScrollPane.setBounds(5, 90, 790, 200);
         add(firstScrollPane);
 
         Statement statement = Connector.createStatement();
@@ -68,6 +68,16 @@ public class Frame extends JFrame {
             }
         });
         task.addActionListener(l -> filter.setRowFilter(RowFilter.regexFilter("task", 4)));
+
+        JPanel mainPane = new JPanel();
+        mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.Y_AXIS));
+        JScrollPane secondScrollPane = new JScrollPane(mainPane);
+        secondScrollPane.setBounds(5, 345, 790, 330);
+        add(secondScrollPane);
+
+        for(int i = 0; i < 10; i++) {
+            mainPane.add(new ForQuestion("1", "2", "3", "4", "5"));
+        }
 
         setVisible(true);
     }

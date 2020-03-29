@@ -9,7 +9,7 @@ import java.util.*;
 public class Frame extends JFrame implements Names{
     private ResultSet rs;
     private String[] row = new String[8];
-    ForQuestion[] questionsOnMainPane;
+    ForQuestion[] questionsOnMainPane = null;
 
     Frame() throws SQLException {
         super("Frame");
@@ -95,7 +95,7 @@ public class Frame extends JFrame implements Names{
         add(horisontalPanel);
         createTest.addActionListener(l -> {
             try {
-                rs = statement.executeQuery("select " + questions + ", " + answer + " from Questions.Question where " +
+                rs = statement.executeQuery("select " + question + ", " + answer + " from Questions.Question where " +
                         "type = 'question' and " + facultet + " = '" + forFacultetFiled.getText() + "' and " + disciplin + " = '"
                         + forDisciplinFiled.getText() + "' and " + kurs + " = '" + forKursFiled.getText() + "' and " +
                         semestr + " = '" + forSemestrFiled.getText() + "';");
@@ -106,7 +106,10 @@ public class Frame extends JFrame implements Names{
                     vector.add(new String[]{rs.getString(1), rs.getString(2)});
                 }
                 if(vector.size() >= 20) {
-                    HashSet<Integer> set = new HashSet<>(20);
+                    if(questionsOnMainPane != null){
+                        clearPane(mainPane);
+                    }
+                    LinkedHashSet<Integer> set = new LinkedHashSet<>(20);
                     while (set.size() < 20) {
                         set.add(random.nextInt(vector.size()));
                     }
@@ -120,6 +123,7 @@ public class Frame extends JFrame implements Names{
                     for (ForQuestion n : questionsOnMainPane) {
                         mainPane.add(n);
                     }
+                    secondScrollPane.updateUI();
                 }
                 else JOptionPane.showMessageDialog(null, "Недостаточно вопросов для составления тестов");
             } catch (SQLException e) {
@@ -127,8 +131,27 @@ public class Frame extends JFrame implements Names{
             }
         });
 
+        JButton answers = new JButton("Показать ответы");
+        answers.setBounds(5, 322, 200, 20);
+        answers.addActionListener(l -> {
+            if(questionsOnMainPane != null && ForQuestion.isTest()){
+                clearPane(mainPane);
+
+                for(int i = 0; i < 20; i++){
+                    mainPane.add(new ForQuestion(questionsOnMainPane[i].getData()));
+                }
+                secondScrollPane.updateUI();
+            }
+        });
+        add(answers);
 
         setVisible(true);
+    }
+
+    private void clearPane(JPanel mainPane){
+        for(int i = 19; i >= 0; i--){
+            mainPane.remove(i);
+        }
     }
 
     public static void main(String[] args) throws SQLException {

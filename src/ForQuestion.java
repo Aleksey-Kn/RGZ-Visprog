@@ -5,13 +5,35 @@ import java.util.Random;
 
 public class ForQuestion extends JPanel {
     private JLabel quest;
+    private String question;
+    private String answer;
+    private static boolean test;
 
-    ForQuestion(String question, String correct, String... uncorrect){
+    ForQuestion(String[] data){
+        setLayout(null);
+        setPreferredSize(new Dimension(770, 55));
+        test = false;
+        question = data[0];
+
+        quest = new JLabel(data[0] + ":");
+        quest.setBounds(0, 0, 770, 20);
+        add(quest);
+
+        JLabel ans = new JLabel(data[1]);
+        ans.setBounds(0, 25, 770, 20);
+        add(ans);
+    }
+
+    ForQuestion(String questionn, String correct, String... uncorrect){
         setLayout(null);
         setPreferredSize(new Dimension(770, 100));
 
+        question = questionn;
+        answer = correct;
+        test = true;
+
         quest = new JLabel(question);
-        quest.setBounds(0, 0, 790, 20);
+        quest.setBounds(0, 0, 770, 20);
         add(quest);
 
         int index = (int)(Math.random() * 4);
@@ -55,25 +77,35 @@ public class ForQuestion extends JPanel {
     }
 
     void recreateQuestion(String last, String now){
-        if(quest.getText().equals(last)){
+        if(question.equals(last)){
+            question = now;
             quest.setText(now);
         }
+    }
+
+    String[] getData(){
+        return new String[]{question, answer};
     }
 
     static ForQuestion[] creater(String[] questions, String[] answer){
         ForQuestion[] result = new ForQuestion[20];
         Random random = new Random();
         HashSet<Integer> set = new HashSet<>();
-        Integer[] mas;
+        Integer[] mas = new Integer[3];
         for(int i = 0; i < 20; i++){
             set.add(i);
             while (set.size() < 4){
                 set.add(random.nextInt(20));
             }
             set.remove(i);
-            mas = (Integer[])set.toArray();
+            set.toArray(mas);
             result[i] = new ForQuestion(questions[i], answer[i], answer[mas[0]], answer[mas[1]], answer[mas[2]]);
+            set.clear();
         }
         return result;
+    }
+
+    static boolean isTest(){
+        return test;
     }
 }

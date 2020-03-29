@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashSet;
+import java.util.Random;
 
 public class ForQuestion extends JPanel {
     private JLabel quest;
@@ -60,7 +62,18 @@ public class ForQuestion extends JPanel {
 
     static ForQuestion[] creater(String[] questions, String[] answer){
         ForQuestion[] result = new ForQuestion[20];
-
+        Random random = new Random();
+        HashSet<Integer> set = new HashSet<>();
+        Integer[] mas;
+        for(int i = 0; i < 20; i++){
+            set.add(i);
+            while (set.size() < 4){
+                set.add(random.nextInt(20));
+            }
+            set.remove(i);
+            mas = (Integer[])set.toArray();
+            result[i] = new ForQuestion(questions[i], answer[i], answer[mas[0]], answer[mas[1]], answer[mas[2]]);
+        }
         return result;
     }
 }

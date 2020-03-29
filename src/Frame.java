@@ -4,12 +4,12 @@ import javax.swing.table.TableRowSorter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class Frame extends JFrame {
+public class Frame extends JFrame implements Names{
     private ResultSet rs;
     private String[] row = new String[8];
+    ForQuestion[] questionsOnMainPane;
 
     Frame() throws SQLException {
         super("Frame");
@@ -75,9 +75,58 @@ public class Frame extends JFrame {
         secondScrollPane.setBounds(5, 345, 790, 330);
         add(secondScrollPane);
 
-        for(int i = 0; i < 10; i++) {
-            mainPane.add(new ForQuestion("1", "2", "3", "4", "5"));
-        }
+        JPanel horisontalPanel = new JPanel();
+        horisontalPanel.setBounds(5, 300, 790, 20);
+        horisontalPanel.setLayout(new BoxLayout(horisontalPanel, BoxLayout.X_AXIS));
+        JButton createTest = new JButton("Сгенерировать тест");
+        horisontalPanel.add(createTest);
+        horisontalPanel.add(new JLabel("Факультет:"));
+        JTextField forFacultetFiled = new JTextField();
+        horisontalPanel.add(forFacultetFiled);
+        horisontalPanel.add(new JLabel("Дисциплина:"));
+        JTextField forDisciplinFiled = new JTextField();
+        horisontalPanel.add(forDisciplinFiled);
+        horisontalPanel.add(new JLabel("Курс:"));
+        JTextField forKursFiled = new JTextField();
+        horisontalPanel.add(forKursFiled);
+        horisontalPanel.add(new JLabel("Семестр:"));
+        JTextField forSemestrFiled = new JTextField();
+        horisontalPanel.add(forSemestrFiled);
+        add(horisontalPanel);
+        createTest.addActionListener(l -> {
+            try {
+                rs = statement.executeQuery("select " + questions + ", " + answer + " from Questions.Question where " +
+                        "type = 'question' and " + facultet + " = '" + forFacultetFiled.getText() + "' and " + disciplin + " = '"
+                        + forDisciplinFiled.getText() + "' and " + kurs + " = '" + forKursFiled.getText() + "' and " +
+                        semestr + " = '" + forSemestrFiled.getText() + "';");
+                String[][] mas = new String[2][20];
+                Random random = new Random();
+                Vector<String[]> vector = new Vector<>(20);
+                while (rs.next()){
+                    vector.add(new String[]{rs.getString(1), rs.getString(2)});
+                }
+                if(vector.size() >= 20) {
+                    HashSet<Integer> set = new HashSet<>(20);
+                    while (set.size() < 20) {
+                        set.add(random.nextInt(vector.size()));
+                    }
+                    Iterator<Integer> it = set.iterator();
+                    for (int i = 0, now; i < 20; i++) {
+                        now = it.next();
+                        mas[0][i] = vector.get(now)[0];
+                        mas[1][i] = vector.get(now)[1];
+                    }
+                    questionsOnMainPane = ForQuestion.creater(mas[0], mas[1]);
+                    for (ForQuestion n : questionsOnMainPane) {
+                        mainPane.add(n);
+                    }
+                }
+                else JOptionPane.showMessageDialog(null, "Недостаточно вопросов для составления тестов");
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        });
+
 
         setVisible(true);
     }

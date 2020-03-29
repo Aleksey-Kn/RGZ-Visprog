@@ -39,7 +39,12 @@ public class Frame extends JFrame implements Names{
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(new String[]{"Факультет", "Дисциплина", "Курс", "Семестр", "Тип задания",
                 "Раздел", "Текст задания", "Ответ на задания"});
-        JTable table = new JTable(tableModel);
+        JTable table = new JTable(tableModel){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 6;
+            }
+        };
         TableRowSorter<DefaultTableModel> filter = new TableRowSorter<>(tableModel);
         table.setRowSorter(filter);
         JScrollPane firstScrollPane = new JScrollPane(table);
@@ -144,6 +149,8 @@ public class Frame extends JFrame implements Names{
             }
         });
         add(answers);
+
+        //tableModel.addTableModelListener(event -> );
 
         setVisible(true);
     }

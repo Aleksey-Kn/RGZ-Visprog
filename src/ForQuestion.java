@@ -25,18 +25,30 @@ public class ForQuestion extends JPanel {
 
         JLabel one = new JLabel(strings[0]);
         one.setBounds(0, 20, 385, 20);
+        if(index == 0){
+            one.setForeground(Color.RED);
+        }
         add(one);
 
         JLabel two = new JLabel(strings[1]);
         two.setBounds(395, 20, 385, 20);
+        if(index == 1){
+            two.setForeground(Color.RED);
+        }
         add(two);
 
         JLabel three = new JLabel(strings[2]);
         three.setBounds(0, 60, 385, 20);
+        if(index == 2){
+            three.setForeground(Color.RED);
+        }
         add(three);
 
         JLabel four = new JLabel(strings[3]);
         four.setBounds(395, 60, 385, 20);
+        if(index == 3){
+            four.setForeground(Color.RED);
+        }
         add(four);
     }
 
@@ -44,5 +56,11 @@ public class ForQuestion extends JPanel {
         if(quest.getText().equals(last)){
             quest.setText(now);
         }
+    }
+
+    static ForQuestion[] creater(String[] questions, String[] answer){
+        ForQuestion[] result = new ForQuestion[20];
+
+        return result;
     }
 }

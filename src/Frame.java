@@ -159,7 +159,6 @@ public class Frame extends JFrame implements Names{
         table.getSelectionModel().addListSelectionListener(l -> {
             if(!l.getValueIsAdjusting()) {
                 lastQuestion = (String) table.getValueAt(table.getSelectedRow(), 6);
-                System.out.println(lastQuestion);
             }
         });
 

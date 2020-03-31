@@ -32,7 +32,7 @@ public class ForQuestion extends JPanel {
         answer = correct;
         test = true;
 
-        quest = new JLabel(question);
+        quest = new JLabel(question + ":");
         quest.setBounds(0, 0, 770, 20);
         add(quest);
 
@@ -79,7 +79,7 @@ public class ForQuestion extends JPanel {
     void recreateQuestion(String last, String now){
         if(question.equals(last)){
             question = now;
-            quest.setText(now);
+            quest.setText(now + ":");
         }
     }
 

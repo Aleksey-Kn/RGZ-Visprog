@@ -144,7 +144,8 @@ public class Frame extends JFrame implements Names{
                 clearPane(mainPane);
 
                 for(int i = 0; i < 20; i++){
-                    mainPane.add(new ForQuestion(questionsOnMainPane[i].getData()));
+                    questionsOnMainPane[i] = new ForQuestion(questionsOnMainPane[i].getData());
+                    mainPane.add(questionsOnMainPane[i]);
                 }
                 secondScrollPane.updateUI();
             }

@@ -63,6 +63,7 @@ public class Frame extends JFrame implements Names{
 
         all.addActionListener(l -> filter.setRowFilter(null));
         questions.addActionListener(l -> {
+            table.getSelectionModel().clearSelection();
             if(textField.getText().equals("")){
                 filter.setRowFilter(RowFilter.regexFilter("question", 4));
             }
@@ -73,7 +74,10 @@ public class Frame extends JFrame implements Names{
                 filter.setRowFilter(RowFilter.andFilter(rowFilters));
             }
         });
-        task.addActionListener(l -> filter.setRowFilter(RowFilter.regexFilter("task", 4)));
+        task.addActionListener(l -> {
+            table.getSelectionModel().clearSelection();
+            filter.setRowFilter(RowFilter.regexFilter("task", 4));
+        });
 
         JPanel mainPane = new JPanel();
         mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.Y_AXIS));
@@ -152,12 +156,17 @@ public class Frame extends JFrame implements Names{
         });
         add(answers);
 
-        table.getSelectionModel().addListSelectionListener(e -> lastQuestion = (String)tableModel.getValueAt(e.getFirstIndex(), 6));
+        table.getSelectionModel().addListSelectionListener(l -> {
+            if(!l.getValueIsAdjusting()) {
+                lastQuestion = (String) table.getValueAt(table.getSelectedRow(), 6);
+                System.out.println(lastQuestion);
+            }
+        });
 
         tableModel.addTableModelListener(event -> {
-            String s = (String)tableModel.getValueAt(event.getFirstRow(), 6);
-            if(questionsOnMainPane != null){
-                for(ForQuestion n: questionsOnMainPane){
+            String s = (String) tableModel.getValueAt(event.getFirstRow(), 6);
+            if (questionsOnMainPane != null) {
+                for (ForQuestion n : questionsOnMainPane) {
                     n.recreateQuestion(lastQuestion, s);
                 }
             }

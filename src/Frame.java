@@ -9,7 +9,8 @@ import java.util.*;
 public class Frame extends JFrame implements Names{
     private ResultSet rs;
     private String[] row = new String[8];
-    ForQuestion[] questionsOnMainPane = null;
+    private ForQuestion[] questionsOnMainPane = null;
+    private String lastQuestion;
 
     Frame() throws SQLException {
         super("Frame");
@@ -150,7 +151,21 @@ public class Frame extends JFrame implements Names{
         });
         add(answers);
 
-        //tableModel.addTableModelListener(event -> );
+        table.getSelectionModel().addListSelectionListener(e -> lastQuestion = (String)tableModel.getValueAt(e.getFirstIndex(), 6));
+
+        tableModel.addTableModelListener(event -> {
+            String s = (String)tableModel.getValueAt(event.getFirstRow(), 6);
+            if(questionsOnMainPane != null){
+                for(ForQuestion n: questionsOnMainPane){
+                    n.recreateQuestion(lastQuestion, s);
+                }
+            }
+            try {
+                statement.executeUpdate("update Questions.Question set " + Names.question + " = '" + s + "' where " + Names.question + " = '" + lastQuestion + "';");
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        });
 
         setVisible(true);
     }

@@ -52,6 +52,11 @@ public class Frame extends JFrame implements Names{
         firstScrollPane.setBounds(5, 90, 790, 200);
         add(firstScrollPane);
 
+        JButton print = new JButton("Распечатать");
+        print.setBounds(600, 60, 190, 20);
+        print.addActionListener(l -> new Printer(table));
+        add(print);
+
         Statement statement = Connector.createStatement();
         rs = statement.executeQuery("select * from Questions.Question");
         while (rs.next()){

@@ -1,9 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfWriter;
 
 public class Printer extends JFrame{
     JTable table;
@@ -23,7 +28,7 @@ public class Printer extends JFrame{
             if (pj != null){
                 Graphics pg = pj.getGraphics();
                 if (pg != null){
-                    print(pg);
+                    table.print(pg);
                     pg.dispose();
                 }else{
                     JOptionPane.showMessageDialog(null, "Graphics's null");
@@ -43,57 +48,32 @@ public class Printer extends JFrame{
         add(textField);
 
         saver.addActionListener(l -> {
-            int ColC = table.getColumnCount(); //Определяем кол-во столбцов
-            int ItemC = table.getRowCount();  //и элементов (строк)
-            StringBuilder sb = new StringBuilder();
-            FileWriter fw = null;
+            String way = textField.getText();
+            int row = table.getRowCount();
+            Document document = new Document(row > 52? PageSize.A2.rotate(): (row > 37?PageSize.A3.rotate(): PageSize.A4.rotate()));
             try {
-                fw = new FileWriter(new File(textField.getText()));
-            }catch (IOException e1) {
-                JOptionPane.showMessageDialog(null, e1.getMessage());
+                PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(new File(way.equals("")? "jTable.pdf": way + ".pdf")));
+
+                document.open();
+                PdfContentByte cb = writer.getDirectContent();
+
+                cb.saveState();
+                Graphics2D g2 = cb.createGraphicsShapes(800, row > 52? 1190: (row > 37?825: 595));
+
+                Shape oldClip = g2.getClip();
+
+                table.print(g2);
+                g2.setClip(oldClip);
+
+                g2.dispose();
+                cb.restoreState();
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
-            for(int i = 0; i < table.getColumnCount(); i++){
-                sb.append(table.getColumnName(i) + "\t");
-            }
-            sb.append("\r\n");
-            for (int i = 0; i < ItemC; i++) { //проходим все строки
-                for (int j = 0; j < ColC; j++) { //собираем одну строку из множества столбцов
-                    sb.append(table.getValueAt(i, j));
-                    if (j < ColC - 1) sb.append("\t\t");
-                    if (j == ColC - 1) sb.append("\r\n");
-                }
-            }
-            try { //Пытаемся писать в файл
-                fw.write(sb.toString()); //записывем собранную строку в файл
-                fw.close();
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
-            }
+            document.close();
             dispose();
         });
 
         setVisible(true);
-    }
-
-    public void paint(Graphics g){
-        g.setFont(new Font("Serif", Font.PLAIN, 12));
-        g.setColor(Color.black);
-
-        StringBuilder workingString = new StringBuilder();
-        int y = 40;
-
-        for(int i = 0; i < table.getColumnCount(); i++) {
-            workingString.append(table.getColumnName(i) + "\t");
-        }
-        g.drawString(workingString.toString(), 30, y);
-        y += 20;
-
-        for(int i = 0; i < table.getRowCount(); i++, y += 15){
-            workingString = new StringBuilder();
-            for(int j = 0; j < table.getColumnCount(); j++){
-                workingString.append(table.getValueAt(i, j) + "\t");
-            }
-            g.drawString(workingString.toString(), 30, y);
-        }
     }
 }

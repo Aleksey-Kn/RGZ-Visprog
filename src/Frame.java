@@ -68,7 +68,6 @@ public class Frame extends JFrame implements Names{
 
         all.addActionListener(l -> filter.setRowFilter(null));
         questions.addActionListener(l -> {
-            table.getSelectionModel().clearSelection();
             if(textField.getText().equals("")){
                 filter.setRowFilter(RowFilter.regexFilter("question", 4));
             }
@@ -80,7 +79,6 @@ public class Frame extends JFrame implements Names{
             }
         });
         task.addActionListener(l -> {
-            table.getSelectionModel().clearSelection();
             filter.setRowFilter(RowFilter.regexFilter("task", 4));
         });
 
